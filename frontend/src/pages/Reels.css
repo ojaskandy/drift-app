@@ -1,0 +1,53 @@
+.reels-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  .reel-box {
+    width: 300px;
+    height: 500px;
+    border: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .buttons-container {
+    display: flex;
+    justify-content: space-around;
+    width: 300px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .reaction {
+    position: absolute;
+    font-size: 2rem;
+    color: green;
+    animation: fade-in-out 2s ease-out;
+    pointer-events: none;
+  }
+  
+  @keyframes fade-in-out {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.2);
+    }
+  }
+  
