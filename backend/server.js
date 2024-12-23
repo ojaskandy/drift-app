@@ -8,21 +8,18 @@ const mongoose = require("mongoose");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Debug: Ensure `.env` is loaded correctly
-console.log("Mongo URI:", process.env.MONGO_URI); // Prints the MongoDB URI to confirm
-
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:3000", // Frontend's local development URL
-    methods: ["GET", "POST", "PUT", "DELETE"], // HTTP methods you want to allow
+    origin: process.env.FRONTEND_URL || "http://localhost:3000", // Update to handle production
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 app.use(bodyParser.json());
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Connection Failed:", err));
 
@@ -63,6 +60,9 @@ app.post("/users/register", async (req, res) => {
     res.status(201).json(newUser);
   } catch (err) {
     console.error("Error in Register:", err);
+    if (err.code === 11000) {
+      return res.status(400).json({ error: "Username already exists." });
+    }
     res.status(500).json({ error: "Failed to register user" });
   }
 });

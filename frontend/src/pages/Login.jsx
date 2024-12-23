@@ -28,9 +28,9 @@ export default function Login() {
     try {
      
       const endpoint = isRegister
-        ? `${process.env.REACT_APP_BACKEND_URL}/users/register`
-        : `${process.env.REACT_APP_BACKEND_URL}/users/login`;
-      
+        ? "https://drift-app-nvmk.onrender.com/users/register"
+        : "https://drift-app-nvmk.onrender.com/users/login";
+
 
       console.log("Sending request to:", endpoint, formData); // Debugging log
 
