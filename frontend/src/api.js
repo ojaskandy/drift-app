@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000"; // Backend server URL
+const API_URL = "https://drift-app-nvmk.onrender.com"; // Updated backend URL
 
 // Create a new user
 export const createUser = async (name, email) => {

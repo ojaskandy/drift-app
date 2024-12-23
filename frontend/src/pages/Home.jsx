@@ -40,7 +40,6 @@ export default function Home() {
       ) : (
         <h2 className="welcome-text">Welcome to Drift!</h2>
       )}
-
       <div className="footer">
         Server is not primed for large-scale usage. For all bugs, questions, and
         feedback, contact <b>ojaskandy@gmail.com</b>.

@@ -1,22 +1,21 @@
 import React, { useState } from "react";
-import { recordPreference } from "../api"; // Import the API helper for backend integration
-import "./Reels.css"; // Ensure Reels.css contains animations or styles
+import { recordPreference } from "../api";
+import "./Reels.css";
 
 export default function Reels() {
-  const [reaction, setReaction] = useState(""); // State for reactions
-  const userId = "123"; // Replace with the actual user ID from login/signup
-  const productId = "reel-01"; // Replace with the actual product/reel ID
+  const [reaction, setReaction] = useState("");
+  const userId = JSON.parse(localStorage.getItem("user"))?._id || "Unknown"; // Retrieve user ID from local storage
+  const productId = "reel-01";
 
-  // Handle button click and set reaction
   const handleReaction = async (type) => {
     setReaction(type);
     try {
-      await recordPreference(userId, productId, type); // Send reaction to the backend
+      await recordPreference(userId, productId, type);
       console.log(`Reaction '${type}' recorded for product ${productId}`);
     } catch (err) {
       console.error("Error recording reaction:", err);
     }
-    setTimeout(() => setReaction(""), 2000); // Clear reaction after 2 seconds
+    setTimeout(() => setReaction(""), 2000);
   };
 
   return (

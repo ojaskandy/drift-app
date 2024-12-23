@@ -26,25 +26,18 @@ export default function Login() {
     setErrorMessage("");
 
     try {
-     
       const endpoint = isRegister
         ? "https://drift-app-nvmk.onrender.com/users/register"
         : "https://drift-app-nvmk.onrender.com/users/login";
-
-
-      console.log("Sending request to:", endpoint, formData); // Debugging log
 
       const response = await axios.post(endpoint, formData);
 
       // Save user info in localStorage
       localStorage.setItem("user", JSON.stringify(response.data));
 
-      console.log("User logged in successfully:", response.data); // Debugging log
-
       // Redirect to the Home page
-      navigate("/");
+      navigate("/home");
     } catch (error) {
-      console.error("Login/Register error:", error.response?.data || error.message); // Debugging log
       setErrorMessage(
         error.response?.data?.error || "Something went wrong. Please try again."
       );

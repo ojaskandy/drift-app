@@ -9,14 +9,17 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src")
-    }
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
   build: {
-    outDir: "dist"
+    outDir: "dist", // Directory for production build
   },
   server: {
-    port: 3000,
-    open: true
-  }
+    port: 3000, // Only used for local development
+    open: true,
+  },
+  preview: {
+    port: 5000, // Port for previewing the build
+  },
 });
