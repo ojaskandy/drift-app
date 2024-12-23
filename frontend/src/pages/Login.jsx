@@ -26,9 +26,10 @@ export default function Login() {
     setErrorMessage("");
 
     try {
-      const endpoint = isRegister
-        ? "http://localhost:5000/users/register"
-        : "http://localhost:5000/users/login";
+        const endpoint = isRegister
+        ? "https://drift-app-nvmk.onrender.com/users/register"
+        : "https://drift-app-nvmk.onrender.com/users/login";
+      
 
       console.log("Sending request to:", endpoint, formData); // Debugging log
 
