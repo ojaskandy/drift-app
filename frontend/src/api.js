@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://drift-app-nvmk.onrender.com"; // Updated backend URL
+// Dynamically load the backend URL from the environment variable
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 // Create a new user
 export const createUser = async (name, email) => {

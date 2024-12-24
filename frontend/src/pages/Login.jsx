@@ -26,9 +26,10 @@ export default function Login() {
     setErrorMessage("");
 
     try {
+      const API_URL = import.meta.env.VITE_BACKEND_URL;
       const endpoint = isRegister
-        ? "https://drift-app-nvmk.onrender.com/users/register"
-        : "https://drift-app-nvmk.onrender.com/users/login";
+        ? `${API_URL}/users/register`
+        : `${API_URL}/users/login`;
 
       const response = await axios.post(endpoint, formData);
 
@@ -36,7 +37,7 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(response.data));
 
       // Redirect to the Home page
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       setErrorMessage(
         error.response?.data?.error || "Something went wrong. Please try again."
