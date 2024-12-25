@@ -20,7 +20,7 @@ export default defineConfig({
     open: true, // Open in browser when running locally
     proxy: {
       "/api": {
-        target: "https://drift-app-nvmk.onrender.com", // Replace with your backend URL
+        target: import.meta.env.VITE_BACKEND_URL, // Dynamically use backend URL from the .env file
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""), // Rewrite API requests

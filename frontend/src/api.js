@@ -5,7 +5,7 @@ const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 // Create a new user
 export const createUser = async (name, email) => {
-  const response = await axios.post(`${API_URL}/users`, { name, email });
+  const response = await axios.post(`${API_URL}/users/register`, { name, email });
   return response.data;
 };
 

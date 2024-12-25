@@ -10,16 +10,19 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 // Middleware
+// Middleware
 app.use(
   cors({
-    origin: [
-      "https://drift-app-2hik.vercel.app", // Your deployed frontend URL
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "https://drift-app-2hik.vercel.app", // Replace with your exact frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow necessary HTTP methods
     credentials: true, // Allow cookies/auth token sharing
+    allowedHeaders: ["Content-Type", "Authorization"], // Add headers for preflight
   })
 );
-app.use(bodyParser.json());
+
+// Handle preflight requests
+app.options("*", cors());
+
 
 // MongoDB Connection
 mongoose
