@@ -31,7 +31,12 @@ export default function Login() {
         ? `${API_URL}/users/register`
         : `${API_URL}/users/login`;
 
+      console.log("Submitting to:", endpoint); // Debug log
+      console.log("Form data:", formData); // Debug log
+
       const response = await axios.post(endpoint, formData);
+
+      console.log("Response data:", response.data); // Debug log
 
       // Save user info in localStorage
       localStorage.setItem("user", JSON.stringify(response.data));
@@ -39,6 +44,7 @@ export default function Login() {
       // Redirect to the Home page
       navigate("/");
     } catch (error) {
+      console.error("Error during submission:", error.response || error); // Debug log
       setErrorMessage(
         error.response?.data?.error || "Something went wrong. Please try again."
       );

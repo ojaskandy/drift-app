@@ -7,7 +7,6 @@ export default function Home() {
   const [welcomeText, setWelcomeText] = useState("");
 
   useEffect(() => {
-    // Fetch user info from localStorage
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -22,7 +21,7 @@ export default function Home() {
         setWelcomeText((prev) => prev + name[index]);
         index++;
         if (index === name.length) clearInterval(interval);
-      }, 100); // Adjust the speed of animation
+      }, 100);
       return () => clearInterval(interval);
     }
   }, [user]);
@@ -41,8 +40,8 @@ export default function Home() {
         <h2 className="welcome-text">Welcome to Drift!</h2>
       )}
       <div className="footer">
-        Server is not primed for large-scale usage. For all bugs, questions, and
-        feedback, contact <b>ojaskandy@gmail.com</b>.
+        Server is not primed for large-scale usage. For all bugs, questions, and feedback, contact{" "}
+        <b>ojaskandy@gmail.com</b>.
       </div>
     </div>
   );

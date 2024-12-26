@@ -2,6 +2,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "url";
 import path from "path";
+import dotenv from "dotenv";
+
+dotenv.config(); // Load environment variables
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,7 +23,7 @@ export default defineConfig({
     open: true, // Open in browser when running locally
     proxy: {
       "/api": {
-        target: import.meta.env.VITE_BACKEND_URL, // Dynamically use backend URL from the .env file
+        target: process.env.VITE_BACKEND_URL, // Dynamically use backend URL from the .env file
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""), // Rewrite API requests
