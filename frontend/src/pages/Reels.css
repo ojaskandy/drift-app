@@ -1,35 +1,60 @@
-.reels-page {
+.reels-container {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
-.reels-section {
-  width: 33%;
+.reel-section {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-right: 1px solid #ccc;
-  padding: 10px;
+  background: #f9f9f9;
 }
 
-.reel-placeholder {
+.reel-box {
   width: 100%;
-  height: 300px;
-  background-color: #f9f9f9;
+  height: 70%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  color: #888;
-  margin-bottom: 20px;
+  border-right: 2px solid #ddd;
+  background: #000;
 }
 
-.website-section {
-  width: 67%;
+.reel-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
-.website-frame {
+.navigation-buttons {
+  margin-top: 10px;
+}
+
+.navigation-buttons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+}
+
+.navigation-buttons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.iframe-section {
+  flex: 2;
+  height: 100%;
+}
+
+.iframe-box {
   width: 100%;
   height: 100%;
   border: none;

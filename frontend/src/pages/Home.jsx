@@ -8,8 +8,10 @@ const categories = [
     image: "https://via.placeholder.com/300x200?text=Clothing",
     companies: [
       { name: "Gucci", website: "https://www.gucci.com" },
-      { name: "Nike", website: "https://www.nike.com" },
-      { name: "Adidas", website: "https://www.adidas.com" },
+      { name: "Zara", website: "https://www.zara.com" },
+      { name: "H&M", website: "https://www2.hm.com" },
+      { name: "Levi's", website: "https://www.levi.com" },
+      { name: "Uniqlo", website: "https://www.uniqlo.com" },
     ],
   },
   {
@@ -18,8 +20,10 @@ const categories = [
     image: "https://via.placeholder.com/300x200?text=Technology",
     companies: [
       { name: "Apple", website: "https://www.apple.com" },
-      { name: "Google", website: "https://www.google.com" },
       { name: "Samsung", website: "https://www.samsung.com" },
+      { name: "Sony", website: "https://www.sony.com" },
+      { name: "Dell", website: "https://www.dell.com" },
+      { name: "Lenovo", website: "https://www.lenovo.com" },
     ],
   },
   {
@@ -30,6 +34,8 @@ const categories = [
       { name: "Chanel", website: "https://www.chanel.com" },
       { name: "Sephora", website: "https://www.sephora.com" },
       { name: "MAC", website: "https://www.maccosmetics.com" },
+      { name: "Dior", website: "https://www.dior.com" },
+      { name: "Maybelline", website: "https://www.maybelline.com" },
     ],
   },
   {
@@ -40,6 +46,8 @@ const categories = [
       { name: "Tesla", website: "https://www.tesla.com" },
       { name: "BMW", website: "https://www.bmw.com" },
       { name: "Mercedes", website: "https://www.mercedes-benz.com" },
+      { name: "Audi", website: "https://www.audi.com" },
+      { name: "Ford", website: "https://www.ford.com" },
     ],
   },
 ];
@@ -59,10 +67,8 @@ export default function Home() {
       <main className="categories-container">
         {categories.map((category) => (
           <div
+            className="category-box"
             key={category.name}
-            className={`category-box ${
-              expandedCategory === category.name ? "expanded" : ""
-            }`}
             onClick={() => toggleCategory(category.name)}
             style={{
               backgroundColor: category.color,
@@ -71,13 +77,15 @@ export default function Home() {
               backgroundPosition: "center",
             }}
           >
-            <h2 className="category-title">{category.name}</h2>
+            <h2>{category.name}</h2>
             {expandedCategory === category.name && (
               <ul className="company-list">
                 {category.companies.map((company) => (
                   <li key={company.name}>
                     <a
-                      href={`/reels?name=${company.name}&website=${company.website}`}
+                      href={`/reels?name=${company.name}&website=${encodeURIComponent(
+                        company.website
+                      )}`}
                       className="company-link"
                     >
                       {company.name}

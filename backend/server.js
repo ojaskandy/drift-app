@@ -8,37 +8,18 @@ const mongoose = require("mongoose");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-
-
 // Middleware: CORS Configuration
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        // Allow requests with no origin, like Postman or mobile apps
-        return callback(null, true);
-      }
-      const allowedOrigins = [
-        process.env.FRONTEND_URL, // Frontend URL from environment variable
-        "http://localhost:3000", // Localhost for development
-      ];
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true); // Allow if origin is in the list
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: [
+      process.env.FRONTEND_URL, // Frontend URL from environment variable
+      "http://localhost:3000", // Localhost for development
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true, // Allow cookies or other credentials
     allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"],
   })
 );
-
-// Ensure preflight (OPTIONS) requests are handled
-app.options("*", cors());
-
-
-// Handle preflight requests
-app.options("*", cors());
 
 // Middleware: Parse JSON
 app.use(bodyParser.json());
@@ -63,12 +44,8 @@ const User = mongoose.model("User", userSchema);
 // Route: Test MongoDB Connection
 app.get("/test-mongo", async (req, res) => {
   try {
-    const testUser = await User.findOne(); // Use the "User" model
-    if (testUser) {
-      res.status(200).json({ message: "MongoDB Connected", user: testUser });
-    } else {
-      res.status(200).json({ message: "MongoDB Connected, but no users found" });
-    }
+    const testUser = await User.findOne();
+    res.status(200).json({ message: "MongoDB Connected", user: testUser || "No users found" });
   } catch (err) {
     console.error("MongoDB Query Failed:", err);
     res.status(500).json({ error: "MongoDB Query Failed", details: err });
@@ -89,13 +66,7 @@ app.post("/users/register", async (req, res) => {
       return res.status(400).json({ error: "All fields are required." });
     }
 
-    const newUser = new User({
-      name: fullName,
-      email,
-      phoneNumber,
-      username,
-      password,
-    });
+    const newUser = new User({ name: fullName, email, phoneNumber, username, password });
 
     await newUser.save();
     res.status(201).json(newUser);

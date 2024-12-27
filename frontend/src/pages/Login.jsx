@@ -20,34 +20,35 @@ export default function Login() {
     setFormData({ ...formData, [name]: value });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage("");
-  
+
     try {
-      const API_URL = import.meta.env.VITE_BACKEND_URL;
-  
+      const API_URL = process.env.VITE_BACKEND_URL;
+
       // Determine the correct endpoint for login or registration
       const endpoint = isRegister
         ? `${API_URL}/users/register`
         : `${API_URL}/users/login`;
-  
-      console.log("Submitting to endpoint:", endpoint); // Debug log
-  
+
+      console.log("Submitting to endpoint:", endpoint);
+
       // Send the request to the backend
-      const response = await axios.post(endpoint, formData);
-  
-      console.log("Response received:", response.data); // Debug log
-  
+      const response = await axios.post(endpoint, formData, {
+        withCredentials: true, // Ensure credentials like cookies are sent
+      });
+
+      console.log("Response received:", response.data);
+
       // Save user info in localStorage
       localStorage.setItem("user", JSON.stringify(response.data));
-  
+
       // Redirect to the Home page
-      navigate("/home"); // Ensure '/home' matches your Route in App.jsx
+      navigate("/home");
     } catch (error) {
-      console.error("Error during submission:", error.response || error); // Debug log
+      console.error("Error during submission:", error.response || error);
       setErrorMessage(
         error.response?.data?.error || "Something went wrong. Please try again."
       );
@@ -55,7 +56,6 @@ export default function Login() {
       setLoading(false);
     }
   };
-  
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>

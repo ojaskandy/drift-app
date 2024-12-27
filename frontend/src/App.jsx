@@ -11,6 +11,10 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/reels" element={<Reels />} />
+        <Route
+          path="*"
+          element={<h1>404: Page Not Found</h1>} // Handle undefined routes
+        />
       </Routes>
     </Router>
   );
