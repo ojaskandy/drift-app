@@ -1,73 +1,93 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import "./Home.css";
 
+const categories = [
+  {
+    name: "Clothing",
+    color: "#FF5733",
+    image: "https://via.placeholder.com/300x200?text=Clothing",
+    companies: [
+      { name: "Gucci", website: "https://www.gucci.com" },
+      { name: "Nike", website: "https://www.nike.com" },
+      { name: "Adidas", website: "https://www.adidas.com" },
+    ],
+  },
+  {
+    name: "Technology",
+    color: "#33FF57",
+    image: "https://via.placeholder.com/300x200?text=Technology",
+    companies: [
+      { name: "Apple", website: "https://www.apple.com" },
+      { name: "Google", website: "https://www.google.com" },
+      { name: "Samsung", website: "https://www.samsung.com" },
+    ],
+  },
+  {
+    name: "Fashion + Beauty",
+    color: "#3357FF",
+    image: "https://via.placeholder.com/300x200?text=Fashion+Beauty",
+    companies: [
+      { name: "Chanel", website: "https://www.chanel.com" },
+      { name: "Sephora", website: "https://www.sephora.com" },
+      { name: "MAC", website: "https://www.maccosmetics.com" },
+    ],
+  },
+  {
+    name: "Automobiles",
+    color: "#FFC300",
+    image: "https://via.placeholder.com/300x200?text=Automobiles",
+    companies: [
+      { name: "Tesla", website: "https://www.tesla.com" },
+      { name: "BMW", website: "https://www.bmw.com" },
+      { name: "Mercedes", website: "https://www.mercedes-benz.com" },
+    ],
+  },
+];
+
 export default function Home() {
-  const [user, setUser] = useState(null);
-  const [welcomeText, setWelcomeText] = useState("");
-  const [welcomeColor, setWelcomeColor] = useState("#000"); // Default color
-  const navigate = useNavigate();
+  const [expandedCategory, setExpandedCategory] = useState(null);
 
-  useEffect(() => {
-    // Fetch user info from localStorage
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      const name = `Welcome, ${user.name.split(" ")[0]}!`;
-      let index = 0;
-      const interval = setInterval(() => {
-        setWelcomeText((prev) => prev + name[index]);
-        index++;
-        if (index === name.length) clearInterval(interval);
-      }, 100); // Adjust the speed of animation
-      setWelcomeColor(getRandomColor()); // Change color
-      return () => clearInterval(interval);
-    }
-  }, [user]);
-
-  const getRandomColor = () => {
-    const colors = ["#FF5733", "#33FF57", "#3357FF", "#FFC300", "#DA33FF"];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-
-  const handleLogoClick = () => {
-    navigate("/"); // Navigate to home page
+  const toggleCategory = (categoryName) => {
+    setExpandedCategory((prev) => (prev === categoryName ? null : categoryName));
   };
 
   return (
     <div className="home-container">
       <header className="header">
-        <h1 className="logo" onClick={handleLogoClick}>
-          DRIFT
-        </h1>
-        <nav>
-          <Link to="/reels" className="nav-link">
-            Reels
-          </Link>
-          <Link to="/cart" className="nav-link cart">
-            Shopping Cart
-          </Link>
-        </nav>
+        <h1 className="logo">DRIFT</h1>
       </header>
-      <main>
-        {user ? (
-          <>
-            <h2 className="welcome-text" style={{ color: welcomeColor }}>
-              {welcomeText}
-            </h2>
-          </>
-        ) : (
-          <h2 className="welcome-text">Welcome to Drift!</h2>
-        )}
-        <div className="footer">
-          Server is not primed for large-scale usage. For all bugs, questions,
-          and feedback, contact <b>ojaskandy@gmail.com</b>.
-        </div>
+      <main className="categories-container">
+        {categories.map((category) => (
+          <div
+            key={category.name}
+            className={`category-box ${
+              expandedCategory === category.name ? "expanded" : ""
+            }`}
+            onClick={() => toggleCategory(category.name)}
+            style={{
+              backgroundColor: category.color,
+              backgroundImage: `url(${category.image})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <h2 className="category-title">{category.name}</h2>
+            {expandedCategory === category.name && (
+              <ul className="company-list">
+                {category.companies.map((company) => (
+                  <li key={company.name}>
+                    <a
+                      href={`/reels?name=${company.name}&website=${company.website}`}
+                      className="company-link"
+                    >
+                      {company.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
       </main>
     </div>
   );

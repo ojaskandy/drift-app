@@ -8,17 +8,34 @@ const mongoose = require("mongoose");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+
+
 // Middleware: CORS Configuration
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL, // Frontend URL from environment variable
-      "http://localhost:3000",  // Localhost for development
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    origin: (origin, callback) => {
+      if (!origin) {
+        // Allow requests with no origin, like Postman or mobile apps
+        return callback(null, true);
+      }
+      const allowedOrigins = [
+        process.env.FRONTEND_URL, // Frontend URL from environment variable
+        "http://localhost:3000", // Localhost for development
+      ];
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true); // Allow if origin is in the list
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true, // Allow cookies or other credentials
+    allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"],
   })
 );
+
+// Ensure preflight (OPTIONS) requests are handled
+app.options("*", cors());
+
 
 // Handle preflight requests
 app.options("*", cors());
