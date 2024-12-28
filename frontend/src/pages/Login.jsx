@@ -26,7 +26,13 @@ export default function Login() {
     setErrorMessage("");
 
     try {
+      // Access the backend URL from environment variables using Vite's syntax
       const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+      // Ensure API_URL is properly defined
+      if (!API_URL) {
+        throw new Error("Backend URL is not defined in the environment variables.");
+      }
 
       // Determine the correct endpoint for login or registration
       const endpoint = isRegister
@@ -42,7 +48,6 @@ export default function Login() {
 
       console.log("Response received:", response.data);
 
-      // Check if login or registration was successful
       if (response.status === 200 || response.status === 201) {
         // Save user info in localStorage
         localStorage.setItem("user", JSON.stringify(response.data));
@@ -50,7 +55,7 @@ export default function Login() {
         // Redirect to the Home page
         navigate("/home");
       } else {
-        throw new Error("Unexpected response status");
+        throw new Error("Unexpected response status from the backend.");
       }
     } catch (error) {
       console.error("Error during submission:", error.response || error);
@@ -123,7 +128,7 @@ export default function Login() {
             style={{ display: "block", margin: "10px 0" }}
           />
         </label>
-        <button type="submit" style={{ marginTop: "10px" }}>
+        <button type="submit" style={{ marginTop: "10px" }} disabled={loading}>
           {loading ? "Loading..." : isRegister ? "Register" : "Login"}
         </button>
       </form>
