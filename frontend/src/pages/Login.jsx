@@ -26,7 +26,6 @@ export default function Login() {
     setErrorMessage("");
 
     try {
-      // Access the backend URL from environment variables using Vite's syntax
       const API_URL = import.meta.env.VITE_BACKEND_URL;
 
       // Determine the correct endpoint for login or registration
@@ -43,11 +42,16 @@ export default function Login() {
 
       console.log("Response received:", response.data);
 
-      // Save user info in localStorage
-      localStorage.setItem("user", JSON.stringify(response.data));
+      // Check if login or registration was successful
+      if (response.status === 200 || response.status === 201) {
+        // Save user info in localStorage
+        localStorage.setItem("user", JSON.stringify(response.data));
 
-      // Redirect to the Home page
-      navigate("/home");
+        // Redirect to the Home page
+        navigate("/home");
+      } else {
+        throw new Error("Unexpected response status");
+      }
     } catch (error) {
       console.error("Error during submission:", error.response || error);
       setErrorMessage(
@@ -61,7 +65,10 @@ export default function Login() {
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>{isRegister ? "Register" : "Login"}</h1>
-      <form onSubmit={handleSubmit} style={{ display: "inline-block", textAlign: "left" }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "inline-block", textAlign: "left" }}
+      >
         {isRegister && (
           <>
             <label>
@@ -120,12 +127,16 @@ export default function Login() {
           {loading ? "Loading..." : isRegister ? "Register" : "Login"}
         </button>
       </form>
-      {errorMessage && <p style={{ marginTop: "20px", color: "red" }}>{errorMessage}</p>}
+      {errorMessage && (
+        <p style={{ marginTop: "20px", color: "red" }}>{errorMessage}</p>
+      )}
       <p
         style={{ cursor: "pointer", marginTop: "20px", color: "blue" }}
         onClick={() => setIsRegister(!isRegister)}
       >
-        {isRegister ? "Already have an account? Login" : "Don't have an account? Register"}
+        {isRegister
+          ? "Already have an account? Login"
+          : "Don't have an account? Register"}
       </p>
     </div>
   );
