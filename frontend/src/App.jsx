@@ -13,7 +13,7 @@ function App() {
         <Route path="/reels" element={<Reels />} />
         <Route
           path="*"
-          element={<h1>404: Page Not Found</h1>} // Handle undefined routes
+          element={<h1 style={{ textAlign: "center" }}>404: Page Not Found</h1>}
         />
       </Routes>
     </Router>
