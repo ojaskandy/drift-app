@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   process.env.FRONTEND_URL, // Frontend URL from environment variable
   "http://localhost:3000", // Localhost for development
+  "https://your-vercel-deployment-url.vercel.app", // Production frontend URL
 ];
 
 app.use(
@@ -24,8 +25,14 @@ app.use(
       }
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true, // Allow cookies or other credentials
-    allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"],
+    credentials: true,
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Origin",
+      "X-Requested-With",
+      "Accept",
+    ],
   })
 );
 
@@ -34,7 +41,10 @@ app.use(bodyParser.json());
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Connection Failed:", err));
 
@@ -53,7 +63,9 @@ const User = mongoose.model("User", userSchema);
 app.get("/test-mongo", async (req, res) => {
   try {
     const testUser = await User.findOne();
-    res.status(200).json({ message: "MongoDB Connected", user: testUser || "No users found" });
+    res
+      .status(200)
+      .json({ message: "MongoDB Connected", user: testUser || "No users found" });
   } catch (err) {
     console.error("MongoDB Query Failed:", err);
     res.status(500).json({ error: "MongoDB Query Failed", details: err });
@@ -74,7 +86,13 @@ app.post("/users/register", async (req, res) => {
       return res.status(400).json({ error: "All fields are required." });
     }
 
-    const newUser = new User({ name: fullName, email, phoneNumber, username, password });
+    const newUser = new User({
+      name: fullName,
+      email,
+      phoneNumber,
+      username,
+      password,
+    });
 
     await newUser.save();
     res.status(201).json(newUser);
