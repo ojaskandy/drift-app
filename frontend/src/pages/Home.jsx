@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Home.css";
 
 const categories = [
@@ -82,14 +83,14 @@ export default function Home() {
               <ul className="company-list">
                 {category.companies.map((company) => (
                   <li key={company.name}>
-                    <a
-                      href={`/reels?name=${company.name}&website=${encodeURIComponent(
+                    <Link
+                      to={`/reels?name=${company.name}&website=${encodeURIComponent(
                         company.website
                       )}`}
                       className="company-link"
                     >
                       {company.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
