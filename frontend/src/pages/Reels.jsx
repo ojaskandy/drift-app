@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import "./Reels.css";
 
-// Use VITE_ prefixed environment variable
-const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY || "";
+// Correctly access the environment variable for Vite
+const YOUTUBE_API_KEY = import.meta.env.VITE_REACT_APP_YOUTUBE_API_KEY;
 
 export default function Reels() {
   const [searchParams] = useSearchParams();
@@ -12,13 +12,17 @@ export default function Reels() {
   const [videoIds, setVideoIds] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (companyName && YOUTUBE_API_KEY) {
+    if (!YOUTUBE_API_KEY) {
+      setError("YouTube API Key is missing. Please configure it in the .env file.");
+      setLoading(false);
+      return;
+    }
+
+    if (companyName) {
       fetchYouTubeVideos(companyName);
-    } else {
-      setError(true);
     }
   }, [companyName]);
 
@@ -31,7 +35,11 @@ export default function Reels() {
       );
 
       if (!response.ok) {
-        throw new Error(`Error fetching videos: ${response.statusText}`);
+        const errorData = await response.json();
+        console.error("YouTube API error:", errorData);
+        throw new Error(
+          errorData.error.message || "Error fetching YouTube videos"
+        );
       }
 
       const data = await response.json();
@@ -40,8 +48,8 @@ export default function Reels() {
       setLoading(false);
     } catch (err) {
       console.error("Error fetching YouTube videos:", err);
-      setError(true);
       setLoading(false);
+      setError("Error loading reels. Please check API key configuration.");
     }
   };
 
@@ -61,10 +69,10 @@ export default function Reels() {
     <div className="reels-container">
       <div className="reel-section">
         <div className="reel-box">
-          {error ? (
-            <p>Error loading reels. Check API key configuration.</p>
-          ) : loading ? (
+          {loading ? (
             <p>Loading reels...</p>
+          ) : error ? (
+            <p>{error}</p>
           ) : videoIds.length > 0 ? (
             <iframe
               src={`https://www.youtube.com/embed/${videoIds[currentIndex]}?autoplay=1&mute=1&loop=1`}
@@ -90,12 +98,20 @@ export default function Reels() {
       </div>
       <div className="iframe-section">
         {websiteUrl ? (
-          <iframe
-            src={websiteUrl}
-            title={`${companyName} Website`}
-            className="iframe-box"
-            allowFullScreen
-          ></iframe>
+          websiteUrl.includes("gucci.com") ||
+          websiteUrl.includes("restricted-website.com") ? (
+            <p>
+              This website cannot be displayed in an embedded frame due to its
+              security policy.
+            </p>
+          ) : (
+            <iframe
+              src={websiteUrl}
+              title={`${companyName} Website`}
+              className="iframe-box"
+              allowFullScreen
+            ></iframe>
+          )
         ) : (
           <p>No website available.</p>
         )}

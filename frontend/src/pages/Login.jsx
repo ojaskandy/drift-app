@@ -26,7 +26,8 @@ export default function Login() {
     setErrorMessage("");
 
     try {
-      const API_URL = process.env.VITE_BACKEND_URL;
+      // Access the backend URL from environment variables using Vite's syntax
+      const API_URL = import.meta.env.VITE_BACKEND_URL;
 
       // Determine the correct endpoint for login or registration
       const endpoint = isRegister
