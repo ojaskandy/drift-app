@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   process.env.FRONTEND_URL, // Frontend URL from environment variable
   "http://localhost:3000", // Localhost for development
-  "https://your-vercel-deployment-url.vercel.app", // Production frontend URL
+  "https://drift-app-2hik.vercel.app", // Vercel Production URL
 ];
 
 app.use(
@@ -21,6 +21,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.error(`CORS Error: Origin ${origin} not allowed`);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -63,9 +64,10 @@ const User = mongoose.model("User", userSchema);
 app.get("/test-mongo", async (req, res) => {
   try {
     const testUser = await User.findOne();
-    res
-      .status(200)
-      .json({ message: "MongoDB Connected", user: testUser || "No users found" });
+    res.status(200).json({
+      message: "MongoDB Connected",
+      user: testUser || "No users found",
+    });
   } catch (err) {
     console.error("MongoDB Query Failed:", err);
     res.status(500).json({ error: "MongoDB Query Failed", details: err });

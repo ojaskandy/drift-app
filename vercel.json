@@ -11,7 +11,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://drift-app-nvmk.onrender.com/api/$1"
+      "destination": "https://drift-app-nvmk.onrender.com/$1"
     },
     {
       "source": "/(.*)",
