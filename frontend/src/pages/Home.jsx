@@ -6,49 +6,49 @@ const categories = [
   {
     name: "Clothing",
     color: "#FF5733",
-    image: "/public/clothes-background.png",
+    image: "/clothes-background.png", // Updated path
     companies: [
       { name: "Gucci", website: "https://www.gucci.com" },
+      { name: "Zara", website: "https://www.zara.com" },
+      { name: "H&M", website: "https://www2.hm.com" },
       { name: "Levi's", website: "https://www.levi.com" },
-      { name: "ASOS", website: "https://www.asos.com" },
-      { name: "Nordstrom", website: "https://www.nordstrom.com" },
-      { name: "Forever 21", website: "https://www.forever21.com" },
+      { name: "Uniqlo", website: "https://www.uniqlo.com" },
     ],
   },
   {
     name: "Technology",
     color: "#33FF57",
-    image: "/public/technology-background.png",
+    image: "/technology-background.png", // Updated path
     companies: [
+      { name: "Apple", website: "https://www.apple.com" },
+      { name: "Samsung", website: "https://www.samsung.com" },
+      { name: "Sony", website: "https://www.sony.com" },
       { name: "Dell", website: "https://www.dell.com" },
-      { name: "HP", website: "https://www.hp.com" },
-      { name: "Microsoft", website: "https://www.microsoft.com" },
-      { name: "Logitech", website: "https://www.logitech.com" },
-      { name: "Razer", website: "https://www.razer.com" },
+      { name: "Lenovo", website: "https://www.lenovo.com" },
     ],
   },
   {
     name: "Fashion + Beauty",
     color: "#3357FF",
-    image: "/public/fashionbeauty-background.png",
+    image: "/fashionbeauty-background.png", // Updated path
     companies: [
+      { name: "Chanel", website: "https://www.chanel.com" },
       { name: "Sephora", website: "https://www.sephora.com" },
-      { name: "Ulta", website: "https://www.ulta.com" },
-      { name: "Fenty Beauty", website: "https://www.fentybeauty.com" },
-      { name: "MAC Cosmetics", website: "https://www.maccosmetics.com" },
+      { name: "MAC", website: "https://www.maccosmetics.com" },
+      { name: "Dior", website: "https://www.dior.com" },
       { name: "Maybelline", website: "https://www.maybelline.com" },
     ],
   },
   {
     name: "Automobiles",
     color: "#FFC300",
-    image: "/public/automobiles-background.png",
+    image: "/automobiles-background.png", // Updated path
     companies: [
-      { name: "CarMax", website: "https://www.carmax.com" },
-      { name: "AutoNation", website: "https://www.autonation.com" },
       { name: "Tesla", website: "https://www.tesla.com" },
-      { name: "Carvana", website: "https://www.carvana.com" },
-      { name: "Vroom", website: "https://www.vroom.com" },
+      { name: "BMW", website: "https://www.bmw.com" },
+      { name: "Mercedes", website: "https://www.mercedes-benz.com" },
+      { name: "Audi", website: "https://www.audi.com" },
+      { name: "Ford", website: "https://www.ford.com" },
     ],
   },
 ];
@@ -71,9 +71,9 @@ export default function Home() {
   return (
     <div className="home-container">
       <header className="header">
-        <a href="/home" className="logo">
+        <Link to="/home" className="logo">
           DRIFT
-        </a>
+        </Link>
         <h2 className="welcome-text" style={{ color: welcomeColor }}>
           Welcome, {userName}!
         </h2>
@@ -88,7 +88,6 @@ export default function Home() {
             className="category-box"
             onClick={() => toggleCategory(category.name)}
             style={{
-              backgroundColor: category.color,
               backgroundImage: `url(${category.image})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
