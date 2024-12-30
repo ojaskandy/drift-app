@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import "./Reels.css";
 
-// Correctly access the environment variable for Vite
 const YOUTUBE_API_KEY = import.meta.env.VITE_REACT_APP_YOUTUBE_API_KEY;
 
 export default function Reels() {
@@ -13,6 +12,8 @@ export default function Reels() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [iframeError, setIframeError] = useState(false);
+  const [likeAnimation, setLikeAnimation] = useState(false);
 
   useEffect(() => {
     if (!YOUTUBE_API_KEY) {
@@ -37,9 +38,7 @@ export default function Reels() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("YouTube API error:", errorData);
-        throw new Error(
-          errorData.error.message || "Error fetching YouTube videos"
-        );
+        throw new Error(errorData.error.message || "Error fetching YouTube videos");
       }
 
       const data = await response.json();
@@ -51,6 +50,15 @@ export default function Reels() {
       setLoading(false);
       setError("Error loading reels. Please check API key configuration.");
     }
+  };
+
+  const handleIframeError = () => {
+    setIframeError(true);
+  };
+
+  const handleLike = () => {
+    setLikeAnimation(true);
+    setTimeout(() => setLikeAnimation(false), 1000);
   };
 
   const handleNext = () => {
@@ -67,6 +75,11 @@ export default function Reels() {
 
   return (
     <div className="reels-container">
+      <header className="reels-header">
+        <Link to="/home" className="drift-logo">
+          DRIFT
+        </Link>
+      </header>
       <div className="reel-section">
         <div className="reel-box">
           {loading ? (
@@ -95,23 +108,34 @@ export default function Reels() {
             Next
           </button>
         </div>
+        <div className="like-container">
+          <button className="like-button" onClick={handleLike}>
+            Like
+          </button>
+          {likeAnimation && <div className="like-animation">Liked!</div>}
+        </div>
       </div>
       <div className="iframe-section">
-        {websiteUrl ? (
-          websiteUrl.includes("gucci.com") ||
-          websiteUrl.includes("restricted-website.com") ? (
+        {iframeError ? (
+          <div className="iframe-error">
             <p>
-              This website cannot be displayed in an embedded frame due to its
-              security policy.
+              This site is currently not integrated into DRIFT. We will address
+              this issue promptly and fix integration.
             </p>
-          ) : (
-            <iframe
-              src={websiteUrl}
-              title={`${companyName} Website`}
-              className="iframe-box"
-              allowFullScreen
-            ></iframe>
-          )
+            <p>
+              Please contact{" "}
+              <a href="mailto:ojaskandy@gmail.com">ojaskandy@gmail.com</a> with any
+              other bugs.
+            </p>
+          </div>
+        ) : websiteUrl ? (
+          <iframe
+            src={websiteUrl}
+            title={`${companyName} Website`}
+            className="iframe-box"
+            allowFullScreen
+            onError={handleIframeError}
+          ></iframe>
         ) : (
           <p>No website available.</p>
         )}

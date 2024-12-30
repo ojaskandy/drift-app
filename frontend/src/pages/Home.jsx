@@ -1,60 +1,68 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Home.css";
 
 const categories = [
   {
     name: "Clothing",
     color: "#FF5733",
-    image: "https://via.placeholder.com/300x200?text=Clothing",
+    image: "/public/clothes-background.png",
     companies: [
       { name: "Gucci", website: "https://www.gucci.com" },
-      { name: "Zara", website: "https://www.zara.com" },
-      { name: "H&M", website: "https://www2.hm.com" },
       { name: "Levi's", website: "https://www.levi.com" },
-      { name: "Uniqlo", website: "https://www.uniqlo.com" },
+      { name: "ASOS", website: "https://www.asos.com" },
+      { name: "Nordstrom", website: "https://www.nordstrom.com" },
+      { name: "Forever 21", website: "https://www.forever21.com" },
     ],
   },
   {
     name: "Technology",
     color: "#33FF57",
-    image: "https://via.placeholder.com/300x200?text=Technology",
+    image: "/public/technology-background.png",
     companies: [
-      { name: "Apple", website: "https://www.apple.com" },
-      { name: "Samsung", website: "https://www.samsung.com" },
-      { name: "Sony", website: "https://www.sony.com" },
       { name: "Dell", website: "https://www.dell.com" },
-      { name: "Lenovo", website: "https://www.lenovo.com" },
+      { name: "HP", website: "https://www.hp.com" },
+      { name: "Microsoft", website: "https://www.microsoft.com" },
+      { name: "Logitech", website: "https://www.logitech.com" },
+      { name: "Razer", website: "https://www.razer.com" },
     ],
   },
   {
     name: "Fashion + Beauty",
     color: "#3357FF",
-    image: "https://via.placeholder.com/300x200?text=Fashion+Beauty",
+    image: "/public/fashionbeauty-background.png",
     companies: [
-      { name: "Chanel", website: "https://www.chanel.com" },
       { name: "Sephora", website: "https://www.sephora.com" },
-      { name: "MAC", website: "https://www.maccosmetics.com" },
-      { name: "Dior", website: "https://www.dior.com" },
+      { name: "Ulta", website: "https://www.ulta.com" },
+      { name: "Fenty Beauty", website: "https://www.fentybeauty.com" },
+      { name: "MAC Cosmetics", website: "https://www.maccosmetics.com" },
       { name: "Maybelline", website: "https://www.maybelline.com" },
     ],
   },
   {
     name: "Automobiles",
     color: "#FFC300",
-    image: "https://via.placeholder.com/300x200?text=Automobiles",
+    image: "/public/automobiles-background.png",
     companies: [
+      { name: "CarMax", website: "https://www.carmax.com" },
+      { name: "AutoNation", website: "https://www.autonation.com" },
       { name: "Tesla", website: "https://www.tesla.com" },
-      { name: "BMW", website: "https://www.bmw.com" },
-      { name: "Mercedes", website: "https://www.mercedes-benz.com" },
-      { name: "Audi", website: "https://www.audi.com" },
-      { name: "Ford", website: "https://www.ford.com" },
+      { name: "Carvana", website: "https://www.carvana.com" },
+      { name: "Vroom", website: "https://www.vroom.com" },
     ],
   },
 ];
 
 export default function Home() {
   const [expandedCategory, setExpandedCategory] = useState(null);
+  const [welcomeColor, setWelcomeColor] = useState("#333");
+  const navigate = useNavigate();
+  const userName = JSON.parse(localStorage.getItem("user"))?.name?.split(" ")[0] || "Guest";
+
+  useEffect(() => {
+    const randomColor = `hsl(${Math.floor(Math.random() * 360)}, 50%, 50%)`;
+    setWelcomeColor(randomColor);
+  }, []);
 
   const toggleCategory = (categoryName) => {
     setExpandedCategory((prev) => (prev === categoryName ? null : categoryName));
@@ -63,13 +71,21 @@ export default function Home() {
   return (
     <div className="home-container">
       <header className="header">
-        <h1 className="logo">DRIFT</h1>
+        <a href="/home" className="logo">
+          DRIFT
+        </a>
+        <h2 className="welcome-text" style={{ color: welcomeColor }}>
+          Welcome, {userName}!
+        </h2>
+        <Link to="/reels" className="reels-link">
+          Reels
+        </Link>
       </header>
       <main className="categories-container">
         {categories.map((category) => (
           <div
-            className="category-box"
             key={category.name}
+            className="category-box"
             onClick={() => toggleCategory(category.name)}
             style={{
               backgroundColor: category.color,
@@ -98,6 +114,11 @@ export default function Home() {
           </div>
         ))}
       </main>
+      <div className="discover-container">
+        <button className="discover-button" onClick={() => navigate("/reels")}>
+          Discover
+        </button>
+      </div>
     </div>
   );
 }
