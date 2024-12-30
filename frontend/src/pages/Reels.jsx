@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import "./Reels.css";
+import io from "socket.io-client";
 
 const YOUTUBE_API_KEY = import.meta.env.VITE_REACT_APP_YOUTUBE_API_KEY;
+const SOCKET_SERVER_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
+const socket = io(SOCKET_SERVER_URL);
 
 export default function Reels() {
   const [searchParams] = useSearchParams();
@@ -13,7 +17,11 @@ export default function Reels() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [iframeError, setIframeError] = useState(false);
-  const [likeAnimation, setLikeAnimation] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+
+  // Fetch logged-in username from localStorage
+  const username = JSON.parse(localStorage.getItem("user"))?.username || "Anonymous";
 
   useEffect(() => {
     if (!YOUTUBE_API_KEY) {
@@ -25,6 +33,22 @@ export default function Reels() {
     if (companyName) {
       fetchYouTubeVideos(companyName);
     }
+
+    // Fetch chat history when the component mounts
+    socket.on("chat-history", (history) => {
+      setMessages(history);
+    });
+
+    // Append new incoming messages to the chat
+    socket.on("receive-message", (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    // Cleanup socket listeners on unmount
+    return () => {
+      socket.off("chat-history");
+      socket.off("receive-message");
+    };
   }, [companyName]);
 
   const fetchYouTubeVideos = async (query) => {
@@ -52,24 +76,10 @@ export default function Reels() {
     }
   };
 
-  const handleIframeError = () => {
-    setIframeError(true);
-  };
-
-  const handleLike = () => {
-    setLikeAnimation(true);
-    setTimeout(() => setLikeAnimation(false), 1000);
-  };
-
-  const handleNext = () => {
-    if (currentIndex < videoIds.length - 1) {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex((prevIndex) => prevIndex - 1);
+  const sendMessage = () => {
+    if (newMessage.trim()) {
+      socket.emit("send-message", { username, text: newMessage }); // Send message to the backend
+      setNewMessage(""); // Clear the input field
     }
   };
 
@@ -98,47 +108,57 @@ export default function Reels() {
           )}
         </div>
         <div className="navigation-buttons">
-          <button onClick={handlePrevious} disabled={currentIndex === 0}>
+          <button onClick={() => setCurrentIndex((i) => Math.max(i - 1, 0))}>
             Previous
           </button>
           <button
-            onClick={handleNext}
-            disabled={currentIndex === videoIds.length - 1}
+            onClick={() =>
+              setCurrentIndex((i) => Math.min(i + 1, videoIds.length - 1))
+            }
           >
             Next
           </button>
-        </div>
-        <div className="like-container">
-          <button className="like-button" onClick={handleLike}>
-            Like
-          </button>
-          {likeAnimation && <div className="like-animation">Liked!</div>}
         </div>
       </div>
       <div className="iframe-section">
         {iframeError ? (
           <div className="iframe-error">
-            <p>
-              This site is currently not integrated into DRIFT. We will address
-              this issue promptly and fix integration.
-            </p>
-            <p>
-              Please contact{" "}
-              <a href="mailto:ojaskandy@gmail.com">ojaskandy@gmail.com</a> with any
-              other bugs.
-            </p>
+            <p>This site is not integrated. We will fix this issue.</p>
           </div>
         ) : websiteUrl ? (
           <iframe
             src={websiteUrl}
             title={`${companyName} Website`}
             className="iframe-box"
-            allowFullScreen
-            onError={handleIframeError}
+            onError={() => setIframeError(true)}
           ></iframe>
         ) : (
-          <p>No website available.</p>
+          <p>No website provided.</p>
         )}
+      </div>
+      <div className="chat-section">
+        <div className="chat-messages">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`chat-message ${
+                message.username === username ? "my-message" : "other-message"
+              }`}
+            >
+              <strong>{message.username}</strong>
+              {message.text}
+            </div>
+          ))}
+        </div>
+        <div className="chat-input">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+          />
+          <button onClick={sendMessage}>Send</button>
+        </div>
       </div>
     </div>
   );

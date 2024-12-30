@@ -23,7 +23,7 @@ export default defineConfig({
     open: true, // Open in browser when running locally
     proxy: {
       "/api": {
-        target: process.env.VITE_BACKEND_URL, // Dynamically use backend URL from the .env file
+        target: process.env.VITE_BACKEND_URL || "http://localhost:5000", // Fallback if .env variable is missing
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""), // Rewrite API requests

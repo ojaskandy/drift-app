@@ -1,9 +1,10 @@
 .home-container {
+  font-family: Arial, sans-serif;
+  text-align: center;
   height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #f9f9f9;
-  overflow: auto;
 }
 
 .header {
@@ -11,24 +12,23 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background: white;
 }
 
 .logo {
   font-size: 24px;
   font-weight: bold;
-  color: black;
   text-decoration: none;
+  color: black;
 }
 
 .welcome-text {
   font-size: 20px;
-  margin: 0;
+  color: green;
 }
 
 .reels-link {
-  color: #007bff;
   font-size: 18px;
+  color: blue;
   text-decoration: none;
 }
 
@@ -36,73 +36,107 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  height: calc(100% - 80px);
-  gap: 10px;
-  padding: 10px;
+  gap: 20px;
+  flex-grow: 1;
+  margin: 20px;
 }
 
 .category-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
   border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.category-box:hover {
+  transform: scale(1.05);
 }
 
 .category-box h2 {
-  color: black;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 10px 20px;
-  border-radius: 5px;
-}
-
-.company-list {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  list-style: none;
-  padding: 0;
+  font-size: 28px;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
   margin: 0;
 }
 
-.company-list li {
-  margin: 5px 0;
+/* Add colors for each category */
+.category-box[data-category="Clothing"] {
+  background-color: #ff6b6b;
+}
+
+.category-box[data-category="Technology"] {
+  background-color: #4caf50;
+}
+
+.category-box[data-category="Fashion + Beauty"] {
+  background-color: #9b59b6;
+}
+
+.category-box[data-category="Automobiles"] {
+  background-color: #3498db;
+}
+
+/* Subcategories appear on hover */
+.company-list {
+  display: none;
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  text-align: center;
+}
+
+.category-box:hover .company-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .company-link {
-  color: white;
-  text-decoration: none;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 5px 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
   border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+  color: black;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 }
 
+.company-link:hover {
+  background-color: rgba(255, 255, 255, 1);
+}
+
+/* Discover Button */
 .discover-container {
-  position: fixed;
-  bottom: 20px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
+  padding: 20px;
 }
 
 .discover-button {
-  background: linear-gradient(45deg, #ff7eb3, #ff758c, #ffab64);
+  background: linear-gradient(90deg, #ff7eb3, #ff758c, #ff8170);
   color: white;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 10px 20px;
   border: none;
-  border-radius: 50px;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
   cursor: pointer;
-  animation: glow 1.5s infinite alternate;
+  animation: glowing 1.5s infinite;
 }
 
-@keyframes glow {
+@keyframes glowing {
   0% {
-    box-shadow: 0 0 10px #ff758c;
+    box-shadow: 0 0 5px #ff7eb3;
+  }
+  50% {
+    box-shadow: 0 0 20px #ff8170;
   }
   100% {
-    box-shadow: 0 0 20px #ff7eb3;
+    box-shadow: 0 0 5px #ff7eb3;
   }
 }
