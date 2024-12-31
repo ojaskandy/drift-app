@@ -15,8 +15,8 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      process.env.FRONTEND_URL, // Frontend URL from environment variable
       "http://localhost:3000", // Localhost for development
+      process.env.FRONTEND_URL, // Frontend URL from environment variable
     ],
     methods: ["GET", "POST"],
   },
@@ -40,6 +40,16 @@ mongoose
   })
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Connection Failed:", err));
+
+// Define User Schema and Model
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  phoneNumber: String,
+  username: { type: String, unique: true },
+  password: String, // Note: Passwords should be hashed in production!
+});
+const User = mongoose.model("User", userSchema);
 
 // Chat Message Schema
 const messageSchema = new mongoose.Schema({
@@ -83,11 +93,61 @@ io.on("connection", (socket) => {
   });
 });
 
+// Route: Register New User
+app.post("/users/register", async (req, res) => {
+  try {
+    const { fullName, email, phoneNumber, username, password } = req.body;
+
+    if (!fullName || !email || !phoneNumber || !username || !password) {
+      return res.status(400).json({ error: "All fields are required." });
+    }
+
+    const newUser = new User({
+      name: fullName,
+      email,
+      phoneNumber,
+      username,
+      password,
+    });
+
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    console.error("Error in Register:", err);
+    if (err.code === 11000) {
+      return res.status(400).json({ error: "Username already exists." });
+    }
+    res.status(500).json({ error: "Failed to register user" });
+  }
+});
+
+// Route: Login User
+app.post("/users/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: "Username and password are required." });
+    }
+
+    const user = await User.findOne({ username, password });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error in Login:", err);
+    res.status(500).json({ error: "Failed to login" });
+  }
+});
+
 // Basic API routes
 app.get("/", (req, res) => {
   res.status(200).send("Backend is running successfully");
 });
 
+// Start the server
 server.listen(PORT, () => {
   console.log(`Backend server is running on port ${PORT}`);
 });
