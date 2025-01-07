@@ -79,7 +79,7 @@ export default function Home() {
         <h2>Live Now</h2>
         <div className="livestream-box">
           <iframe
-            src="https://www.youtube.com/embed/mezOZGgpdoM"
+            src="https://www.youtube.com/embed/_i1m3v9-r-4"
             title="Live Stream"
             allowFullScreen
             className="livestream-iframe"
