@@ -26,33 +26,26 @@ export default function Login() {
     setErrorMessage("");
 
     try {
-      // Access the backend URL from environment variables using Vite's syntax
       const API_URL = import.meta.env.VITE_BACKEND_URL;
 
-      // Ensure API_URL is properly defined
       if (!API_URL) {
         throw new Error("Backend URL is not defined in the environment variables.");
       }
 
-      // Determine the correct endpoint for login or registration
       const endpoint = isRegister
         ? `${API_URL}/users/register`
         : `${API_URL}/users/login`;
 
       console.log("Submitting to endpoint:", endpoint);
 
-      // Send the request to the backend
       const response = await axios.post(endpoint, formData, {
-        withCredentials: true, // Ensure credentials like cookies are sent
+        withCredentials: true,
       });
 
       console.log("Response received:", response.data);
 
       if (response.status === 200 || response.status === 201) {
-        // Save user info in localStorage
         localStorage.setItem("user", JSON.stringify(response.data));
-
-        // Redirect to the Home page
         navigate("/home");
       } else {
         throw new Error("Unexpected response status from the backend.");
