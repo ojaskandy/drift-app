@@ -22,11 +22,15 @@ const io = new Server(server, {
 // Middleware: CORS Configuration
 app.use(
   cors({
-    origin: ["http://localhost:3000", process.env.FRONTEND_URL || "*"],
+    origin: [
+      "http://localhost:3000", // Local Development
+      "https://drift-app-2hik.vercel.app", // Production Frontend
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
+    credentials: true, // Allow cookies and credentials
   })
 );
+
 
 // Handle Preflight Requests
 app.options("*", cors());
