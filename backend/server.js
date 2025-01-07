@@ -1,148 +1,154 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+require("dotenv").config(); // Load environment variables from .env file
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const http = require("http");
+const { Server } = require("socket.io");
 
-export default function Login() {
-  const [isRegister, setIsRegister] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phoneNumber: "",
-    username: "",
-    password: "",
+// Initialize Express App
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Create HTTP server for socket.io
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000", process.env.FRONTEND_URL || "*"],
+    methods: ["GET", "POST"],
+  },
+});
+
+// Middleware: CORS Configuration
+app.use(
+  cors({
+    origin: ["http://localhost:3000", process.env.FRONTEND_URL || "*"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
+
+// Handle Preflight Requests
+app.options("*", cors());
+
+app.use(bodyParser.json());
+
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error("MongoDB Connection Failed:", err));
+
+// Define User Schema and Model
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  phoneNumber: String,
+  username: { type: String, unique: true },
+  password: String, // Note: Passwords should be hashed in production!
+});
+const User = mongoose.model("User", userSchema);
+
+// Chat Message Schema
+const messageSchema = new mongoose.Schema({
+  username: String,
+  text: String,
+  timestamp: { type: Date, default: Date.now },
+});
+const Message = mongoose.model("Message", messageSchema);
+
+// Chat-related logic
+io.on("connection", (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  // Send existing messages to newly connected user
+  Message.find()
+    .sort({ timestamp: 1 })
+    .then((messages) => {
+      socket.emit("chat-history", messages);
+    })
+    .catch((err) => console.error("Error fetching messages:", err));
+
+  // Listen for new chat messages
+  socket.on("send-message", (data) => {
+    const newMessage = new Message({
+      username: data.username,
+      text: data.text,
+    });
+
+    // Save the message to the database
+    newMessage
+      .save()
+      .then((savedMessage) => {
+        io.emit("receive-message", savedMessage); // Broadcast message to all clients
+      })
+      .catch((err) => console.error("Error saving message:", err));
   });
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  // Handle user disconnect
+  socket.on("disconnect", () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMessage("");
+// Route: Register New User
+app.post("/users/register", async (req, res) => {
+  try {
+    const { fullName, email, phoneNumber, username, password } = req.body;
 
-    try {
-      // Access the backend URL from environment variables using Vite's syntax
-      const API_URL = import.meta.env.VITE_BACKEND_URL;
-
-      // Ensure API_URL is properly defined
-      if (!API_URL) {
-        throw new Error("Backend URL is not defined in the environment variables.");
-      }
-
-      // Determine the correct endpoint for login or registration
-      const endpoint = isRegister
-        ? `${API_URL}/users/register`
-        : `${API_URL}/users/login`;
-
-      console.log("Submitting to endpoint:", endpoint);
-
-      // Send the request to the backend
-      const response = await axios.post(endpoint, formData, {
-        withCredentials: true, // Ensure credentials like cookies are sent
-      });
-
-      console.log("Response received:", response.data);
-
-      if (response.status === 200 || response.status === 201) {
-        // Save user info in localStorage
-        localStorage.setItem("user", JSON.stringify(response.data));
-
-        // Redirect to the Home page
-        navigate("/home");
-      } else {
-        throw new Error("Unexpected response status from the backend.");
-      }
-    } catch (error) {
-      console.error("Error during submission:", error.response || error);
-      setErrorMessage(
-        error.response?.data?.error || "Something went wrong. Please try again."
-      );
-    } finally {
-      setLoading(false);
+    if (!fullName || !email || !phoneNumber || !username || !password) {
+      return res.status(400).json({ error: "All fields are required." });
     }
-  };
 
-  return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>{isRegister ? "Register" : "Login"}</h1>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "inline-block", textAlign: "left" }}
-      >
-        {isRegister && (
-          <>
-            <label>
-              Full Name:
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                style={{ display: "block", margin: "10px 0" }}
-              />
-            </label>
-            <label>
-              Email:
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                style={{ display: "block", margin: "10px 0" }}
-              />
-            </label>
-            <label>
-              Phone Number:
-              <input
-                type="text"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleInputChange}
-                style={{ display: "block", margin: "10px 0" }}
-              />
-            </label>
-          </>
-        )}
-        <label>
-          Username:
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
-            style={{ display: "block", margin: "10px 0" }}
-          />
-        </label>
-        <label>
-          Password:
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            style={{ display: "block", margin: "10px 0" }}
-          />
-        </label>
-        <button type="submit" style={{ marginTop: "10px" }} disabled={loading}>
-          {loading ? "Loading..." : isRegister ? "Register" : "Login"}
-        </button>
-      </form>
-      {errorMessage && (
-        <p style={{ marginTop: "20px", color: "red" }}>{errorMessage}</p>
-      )}
-      <p
-        style={{ cursor: "pointer", marginTop: "20px", color: "blue" }}
-        onClick={() => setIsRegister(!isRegister)}
-      >
-        {isRegister
-          ? "Already have an account? Login"
-          : "Don't have an account? Register"}
-      </p>
-    </div>
-  );
-}
+    const newUser = new User({
+      name: fullName,
+      email,
+      phoneNumber,
+      username,
+      password,
+    });
+
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    console.error("Error in Register:", err);
+    if (err.code === 11000) {
+      return res.status(400).json({ error: "Username already exists." });
+    }
+    res.status(500).json({ error: "Failed to register user" });
+  }
+});
+
+// Route: Login User
+app.post("/users/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: "Username and password are required." });
+    }
+
+    const user = await User.findOne({ username, password });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error in Login:", err);
+    res.status(500).json({ error: "Failed to login" });
+  }
+});
+
+// Basic API routes
+app.get("/", (req, res) => {
+  res.status(200).send("Backend is running successfully");
+});
+
+// Start the server
+server.listen(PORT, () => {
+  console.log(`Backend server is running on port ${PORT}`);
+});
