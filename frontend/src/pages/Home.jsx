@@ -73,6 +73,21 @@ export default function Home() {
           Reels
         </a>
       </header>
+
+      {/* Livestream Section */}
+      <div className="livestream-section">
+        <h2>Live Now</h2>
+        <div className="livestream-box">
+          <iframe
+            src="https://www.youtube.com/embed/mezOZGgpdoM"
+            title="Live Stream"
+            allowFullScreen
+            className="livestream-iframe"
+          ></iframe>
+        </div>
+      </div>
+
+      {/* Categories Section */}
       <main className="categories-container">
         {categories.map((category) => (
           <div

@@ -32,6 +32,32 @@
   text-decoration: none;
 }
 
+/* Livestream Section */
+.livestream-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.livestream-box {
+  width: 90%;
+  height: 300px;
+  margin: 0 auto 20px;
+  border-radius: 15px;
+  border: 2px solid #ddd;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.livestream-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Categories Section */
 .categories-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -65,24 +91,6 @@
   margin: 0;
 }
 
-/* Add colors for each category */
-.category-box[data-category="Clothing"] {
-  background-color: #ff6b6b;
-}
-
-.category-box[data-category="Technology"] {
-  background-color: #4caf50;
-}
-
-.category-box[data-category="Fashion + Beauty"] {
-  background-color: #9b59b6;
-}
-
-.category-box[data-category="Automobiles"] {
-  background-color: #3498db;
-}
-
-/* Subcategories appear on hover */
 .company-list {
   display: none;
   list-style: none;
@@ -113,7 +121,6 @@
   background-color: rgba(255, 255, 255, 1);
 }
 
-/* Discover Button */
 .discover-container {
   padding: 20px;
 }
