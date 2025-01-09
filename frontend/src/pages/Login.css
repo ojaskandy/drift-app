@@ -1,69 +1,192 @@
+/* Main Login Container */
 .login-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(120deg, #e0c3fc, #8ec5fc);
+  font-family: "Arial", sans-serif;
+  color: black; /* Changed to black */
+  overflow: hidden;
+  position: relative;
+}
+
+/* Floating Shapes */
+.shape-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.shape {
+  position: absolute;
+  opacity: 0.7;
+}
+
+.circle {
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.1); /* Slightly visible black */
+  border-radius: 50%;
+  animation: floatCircle 10s ease-in-out infinite;
+}
+
+@keyframes floatCircle {
+  0% {
+    transform: translate(10vw, 10vh);
   }
-  
-  .logo {
-    font-size: 48px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
+  25% {
+    transform: translate(60vw, 20vh);
   }
-  
-  .form-container {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+  50% {
+    transform: translate(40vw, 50vh);
   }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+  75% {
+    transform: translate(20vw, 70vh);
   }
-  
-  label {
-    font-size: 16px;
-    margin-bottom: 5px;
+  100% {
+    transform: translate(10vw, 10vh);
   }
-  
-  input {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-bottom: 100px solid rgba(0, 0, 0, 0.1);
+  animation: floatTriangle 8s linear infinite;
+}
+
+@keyframes floatTriangle {
+  0% {
+    transform: translate(80vw, -20%);
   }
-  
-  button {
-    padding: 10px;
-    font-size: 18px;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  100% {
+    transform: translate(20vw, 120%);
   }
-  
-  button:hover {
-    background-color: #0056b3;
+}
+
+.square {
+  width: 70px;
+  height: 70px;
+  background: rgba(0, 0, 0, 0.1);
+  animation: floatSquare 12s linear infinite;
+}
+
+@keyframes floatSquare {
+  0% {
+    transform: translate(-10%, -10%);
   }
-  
-  .error {
-    margin-top: 15px;
-    color: red;
+  100% {
+    transform: translate(120%, 120%);
   }
-  
-  .toggle {
-    margin-top: 15px;
-    cursor: pointer;
-    color: #007bff;
-  }
-  
+}
+
+/* Logo and Description */
+.logo-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  text-align: left;
+  z-index: 1;
+}
+
+.logo {
+  font-size: 36px;
+  font-weight: bold;
+  color: black; /* Changed to black */
+}
+
+.description {
+  font-size: 18px;
+  color: black; /* Changed to black */
+}
+
+/* Form Container */
+.form-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  z-index: 1;
+}
+
+/* Form Styling */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  font-size: 16px;
+  font-weight: bold;
+  color: black; /* Changed to black */
+  text-align: left;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  background: #f9f9f9;
+  outline: none;
+  transition: border 0.3s ease, background-color 0.3s ease;
+  color: black; /* Changed text color to black */
+}
+
+input:focus {
+  border: 1px solid #8ec5fc;
+  background-color: #ffffff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Button Styling */
+button {
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(90deg, #8ec5fc, #e0c3fc);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: linear-gradient(90deg, #e0c3fc, #8ec5fc);
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Error Message */
+.error {
+  margin-top: 15px;
+  color: #ff3c3c;
+  font-weight: bold;
+}
+
+/* Toggle Register/Login Link */
+.toggle {
+  margin-top: 15px;
+  cursor: pointer;
+  color: black; /* Changed to black */
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.toggle:hover {
+  color: #8ec5fc;
+}
