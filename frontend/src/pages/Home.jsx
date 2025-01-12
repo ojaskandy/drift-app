@@ -115,9 +115,18 @@ export default function Home() {
           </div>
         ))}
       </main>
-      <button className="discover-button" onClick={() => navigate("/reels")}>
+
+      {/* Discover Button */}
+      <button
+        className="discover-button"
+        onClick={() => navigate("/discover")}
+      >
         Discover
       </button>
+
+      
     </div>
+
+    
   );
 }

@@ -14,6 +14,7 @@ export default function Login() {
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showCreatorLogin, setShowCreatorLogin] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -21,7 +22,7 @@ export default function Login() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, type) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage("");
@@ -43,7 +44,11 @@ export default function Login() {
 
       if (response.status === 200 || response.status === 201) {
         localStorage.setItem("user", JSON.stringify(response.data));
-        navigate("/home");
+        if (type === "creator") {
+          navigate("/creator"); // Navigate to the Creator page
+        } else {
+          navigate("/home"); // Navigate to the User interface
+        }
       } else {
         throw new Error("Unexpected response status from the backend.");
       }
@@ -58,6 +63,80 @@ export default function Login() {
 
   return (
     <div className="login-container">
+      {/* Creator Page Button with Hover Pop-Up */}
+      <div
+        className="creator-button-container"
+        onMouseEnter={() => setShowCreatorLogin(true)}
+        onMouseLeave={() => setShowCreatorLogin(false)}
+      >
+        <button className="creator-button">Creator Page</button>
+        {showCreatorLogin && (
+          <div className="creator-login-popup">
+            <h1>{isRegister ? "Creator Register" : "Creator Login"}</h1>
+            <form onSubmit={(e) => handleSubmit(e, "creator")}>
+              {isRegister && (
+                <>
+                  <label>
+                    Full Name:
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                  <label>
+                    Email:
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                  <label>
+                    Phone Number:
+                    <input
+                      type="text"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                </>
+              )}
+              <label>
+                Username:
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                />
+              </label>
+              <label>
+                Password:
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                />
+              </label>
+              <button type="submit" disabled={loading}>
+                {loading ? "Loading..." : isRegister ? "Register" : "Login"}
+              </button>
+            </form>
+            {errorMessage && <p className="error">{errorMessage}</p>}
+            <p className="toggle" onClick={() => setIsRegister(!isRegister)}>
+              {isRegister
+                ? "Already have a Creator account? Login"
+                : "Don't have a Creator account? Register"}
+            </p>
+          </div>
+        )}
+      </div>
+
       {/* Floating Shapes */}
       <div className="shape-container">
         <div className="shape circle"></div>
@@ -76,7 +155,7 @@ export default function Login() {
       {/* Login/Register Form */}
       <div className="form-container">
         <h1>{isRegister ? "Register" : "Login"}</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => handleSubmit(e, "user")}>
           {isRegister && (
             <>
               <label>

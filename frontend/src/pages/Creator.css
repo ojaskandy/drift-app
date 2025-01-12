@@ -1,0 +1,122 @@
+.creator-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+  background: linear-gradient(120deg, #e0c3fc, #8ec5fc);
+  min-height: 100vh;
+  color: black;
+}
+
+.creator-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.creator-header h1 {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.creator-header p {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.upload-section,
+.livestream-section,
+.analytics-section,
+.navigation-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  margin: 20px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.upload-section h2,
+.livestream-section h2,
+.analytics-section h2,
+.navigation-section h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.upload-section input {
+  margin: 10px 0;
+  padding: 8px;
+  font-size: 16px;
+}
+
+.upload-section button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(90deg, #8ec5fc, #e0c3fc);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.upload-section button:hover {
+  background: linear-gradient(90deg, #e0c3fc, #8ec5fc);
+  transform: scale(1.05);
+}
+
+.upload-section button:active {
+  transform: scale(0.95);
+}
+
+.upload-message {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: green;
+}
+
+.livestream-section .coming-soon-button,
+.analytics-section .coming-soon-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: gray;
+  border: none;
+  border-radius: 5px;
+  cursor: not-allowed;
+}
+
+.livestream-section p,
+.analytics-section p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+/* Navigation Section Styling */
+.navigation-section button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(90deg, #8ec5fc, #e0c3fc);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.navigation-section button:hover {
+  background: linear-gradient(90deg, #e0c3fc, #8ec5fc);
+  transform: scale(1.05);
+}
+
+.navigation-section button:active {
+  transform: scale(0.95);
+}

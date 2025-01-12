@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Reels from "./pages/Reels";
+import Discover from "./pages/Discover";
+import Creator from "./pages/Creator";
 
 function App() {
   return (
@@ -12,6 +14,9 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/reels" element={<Reels />} />
+          <Route path="/discover" element={<Discover />} />
+          <Route path="/creator" element={<Creator />} />
+
           <Route
             path="*"
             element={<h1 style={{ textAlign: "center" }}>404: Page Not Found</h1>}
