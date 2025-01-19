@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import "./Discover.css";
 
 const API_KEY = import.meta.env.VITE_REACT_APP_YOUTUBE_API_KEY;
@@ -13,10 +13,17 @@ export default function Discover() {
 
   const fetchUploadedVideos = async () => {
     try {
-      const response = await fetch("http://localhost:5000/videos"); // Fetch uploaded videos
+      const response = await fetch("http://localhost:10000/videos");
       if (!response.ok) throw new Error("Error fetching uploaded videos");
-      const uploadedVideos = await response.json();
-      return uploadedVideos.map((video) => video.url); // Extract video URLs
+      const videos = await response.json();
+
+      return videos.map((video) => {
+        // Handle both local uploads and YouTube videos
+        if (video.url.startsWith("/uploads")) {
+          return `http://localhost:10000${video.url}`;
+        }
+        return video.url;
+      });
     } catch (err) {
       console.error("Error fetching uploaded videos:", err);
       return [];
@@ -32,7 +39,9 @@ export default function Discover() {
       if (!response.ok) throw new Error("Error fetching YouTube videos");
       const data = await response.json();
       setNextPageToken(data.nextPageToken || null); // Save nextPageToken for pagination
-      return data.items.map((item) => `https://www.youtube.com/embed/${item.id.videoId}`);
+      return data.items.map(
+        (item) => `https://www.youtube.com/embed/${item.id.videoId}`
+      );
     } catch (err) {
       console.error("Error fetching YouTube videos:", err);
       setError("Error loading YouTube videos. Please try again later.");
@@ -43,8 +52,8 @@ export default function Discover() {
   const fetchAllVideos = async () => {
     try {
       setLoading(true);
-      const uploadedVideos = await fetchUploadedVideos(); // Uploaded videos first
-      const youtubeVideos = await fetchYouTubeVideos(); // YouTube videos
+      const uploadedVideos = await fetchUploadedVideos(); // Fetch uploaded videos
+      const youtubeVideos = await fetchYouTubeVideos(); // Fetch YouTube videos
       setVideoUrls([...uploadedVideos, ...youtubeVideos]); // Combine uploaded and YouTube videos
       setLoading(false);
     } catch (err) {
@@ -55,31 +64,25 @@ export default function Discover() {
   };
 
   useEffect(() => {
-    fetchAllVideos(); // Fetch all videos on page load
+    fetchAllVideos(); // Fetch videos when the component mounts
   }, []);
 
-  const handleScroll = useCallback(() => {
-    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    if (scrollTop + clientHeight >= scrollHeight - 100 && !isFetchingMore && nextPageToken) {
-      setIsFetchingMore(true);
-      fetchYouTubeVideos(nextPageToken).then((urls) => {
-        setVideoUrls((prev) => [...prev, ...urls]);
-        setIsFetchingMore(false);
-      });
-    }
-  }, [nextPageToken, isFetchingMore]);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
-
   const handlePrevious = () => {
-    if (currentVideoIndex > 0) setCurrentVideoIndex((prev) => prev - 1);
+    if (currentVideoIndex > 0) {
+      setCurrentVideoIndex((prevIndex) => prevIndex - 1);
+    }
   };
 
-  const handleNext = () => {
-    if (currentVideoIndex < videoUrls.length - 1) setCurrentVideoIndex((prev) => prev + 1);
+  const handleNext = async () => {
+    if (currentVideoIndex < videoUrls.length - 1) {
+      setCurrentVideoIndex((prevIndex) => prevIndex + 1);
+    } else if (nextPageToken && !isFetchingMore) {
+      setIsFetchingMore(true);
+      const additionalVideos = await fetchYouTubeVideos(nextPageToken);
+      setVideoUrls((prevUrls) => [...prevUrls, ...additionalVideos]);
+      setCurrentVideoIndex((prevIndex) => prevIndex + 1);
+      setIsFetchingMore(false);
+    }
   };
 
   return (
@@ -102,7 +105,11 @@ export default function Discover() {
       </div>
 
       <div className="controls">
-        <button className="arrow-button up-arrow" onClick={handlePrevious} disabled={currentVideoIndex === 0}>
+        <button
+          className="arrow-button up-arrow"
+          onClick={handlePrevious}
+          disabled={currentVideoIndex === 0}
+        >
           ↑
         </button>
         <button

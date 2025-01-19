@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
@@ -50,10 +50,16 @@ const categories = [
 ];
 
 export default function Home() {
+  const [userName, setUserName] = useState("Guest"); // Default to "Guest"
   const navigate = useNavigate();
-  const userName =
-    JSON.parse(localStorage.getItem("user"))?.name?.split(" ")[0] || "Guest";
 
+  useEffect(() => {
+    const storedFullName = localStorage.getItem("userName"); // Retrieve fullName from localStorage
+    if (storedFullName) {
+      setUserName(storedFullName.split(" ")[0]); // Display only the first name
+    }
+  }, []);
+  
   const handleCategoryClick = (company) => {
     navigate(
       `/reels?name=${company.name}&website=${encodeURIComponent(
@@ -123,10 +129,6 @@ export default function Home() {
       >
         Discover
       </button>
-
-      
     </div>
-
-    
   );
 }

@@ -26,24 +26,26 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setErrorMessage("");
-
+  
     try {
       const API_URL = import.meta.env.VITE_BACKEND_URL;
-
+  
       if (!API_URL) {
         throw new Error("Backend URL is not defined in the environment variables.");
       }
-
+  
       const endpoint = isRegister
         ? `${API_URL}/users/register`
         : `${API_URL}/users/login`;
-
+  
       const response = await axios.post(endpoint, formData, {
         withCredentials: true,
       });
-
+  
       if (response.status === 200 || response.status === 201) {
-        localStorage.setItem("user", JSON.stringify(response.data));
+        const { fullName } = response.data; // Extract fullName from backend response
+        localStorage.setItem("userName", fullName); // Store fullName in localStorage
+  
         if (type === "creator") {
           navigate("/creator"); // Navigate to the Creator page
         } else {
@@ -60,6 +62,7 @@ export default function Login() {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="login-container">

@@ -120,3 +120,56 @@
 .navigation-section button:active {
   transform: scale(0.95);
 }
+
+.input-group {
+  margin: 15px 0;
+  width: 100%;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.submit-message {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.submit-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.submit-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.uploaded-videos-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.uploaded-video-item {
+  width: 300px;
+  text-align: center;
+}
+
+.uploaded-video-iframe {
+  width: 100%;
+  height: 200px;
+  border: none;
+}
