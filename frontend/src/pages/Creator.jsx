@@ -9,27 +9,23 @@ export default function Creator() {
   const [creatorName, setCreatorName] = useState("");
   const [uploadedVideos, setUploadedVideos] = useState([]);
 
-  // Fetch the creator's name from sessionStorage/localStorage on component load
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   useEffect(() => {
-    const storedFullName = localStorage.getItem("userName"); // Retrieve fullName from localStorage
+    const storedFullName = localStorage.getItem("userName");
     if (storedFullName) {
-      setCreatorName(storedFullName.split(" ")[0]); // Display only the first name
+      setCreatorName(storedFullName.split(" ")[0]);
     }
   }, []);
 
-  // Fetch the creator's uploaded videos
   useEffect(() => {
     const fetchUploadedVideos = async () => {
       const username = localStorage.getItem("username");
       if (!username) return;
 
       try {
-        const response = await fetch(
-          `http://localhost:10000/videos/creator/${username}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch uploaded videos.");
-        }
+        const response = await fetch(`${BACKEND_URL}/videos/creator/${username}`);
+        if (!response.ok) throw new Error("Failed to fetch uploaded videos.");
         const videos = await response.json();
         setUploadedVideos(videos);
       } catch (error) {
@@ -38,7 +34,7 @@ export default function Creator() {
     };
 
     fetchUploadedVideos();
-  }, []);
+  }, [BACKEND_URL]);
 
   const handleLinkChange = (e) => {
     setVideoLink(e.target.value);
@@ -65,31 +61,31 @@ export default function Creator() {
       setSubmitMessage("Please provide either a YouTube link or upload a video file.");
       return;
     }
-  
+
     setIsSubmitting(true);
-  
+
     try {
       let response;
-  
+
       if (videoFile) {
         const formData = new FormData();
         formData.append("file", videoFile);
         formData.append("creator", localStorage.getItem("username") || "Unknown Creator");
         formData.append("title", videoFile.name);
-  
-        response = await fetch("http://localhost:10000/videos/upload", {
+
+        response = await fetch(`${BACKEND_URL}/videos/upload`, {
           method: "POST",
           body: formData,
         });
       }
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Upload failed");
       }
-  
+
       const result = await response.json();
-      setUploadedVideos((prev) => [result.video, ...prev]); // Update the list dynamically
+      setUploadedVideos((prev) => [result.video, ...prev]);
       setSubmitMessage("Video uploaded successfully!");
       setVideoLink("");
       setVideoFile(null);
@@ -100,7 +96,6 @@ export default function Creator() {
       setIsSubmitting(false);
     }
   };
-  
 
   return (
     <div className="creator-container">
@@ -160,12 +155,8 @@ export default function Creator() {
 
       <section className="navigation-section">
         <h2>Navigation</h2>
-        <button onClick={() => (window.location.href = "/home")}>
-          Go to Home
-        </button>
-        <button onClick={() => (window.location.href = "/discover")}>
-          Go to Discover
-        </button>
+        <button onClick={() => (window.location.href = "/home")}>Go to Home</button>
+        <button onClick={() => (window.location.href = "/discover")}>Go to Discover</button>
       </section>
     </div>
   );

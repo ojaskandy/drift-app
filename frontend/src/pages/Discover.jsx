@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Discover.css";
 
 const API_KEY = import.meta.env.VITE_REACT_APP_YOUTUBE_API_KEY;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // Fetch backend URL from environment variables
 
 export default function Discover() {
   const [videoUrls, setVideoUrls] = useState([]);
@@ -13,14 +14,14 @@ export default function Discover() {
 
   const fetchUploadedVideos = async () => {
     try {
-      const response = await fetch("http://localhost:10000/videos");
+      const response = await fetch(`${BACKEND_URL}/videos`);
       if (!response.ok) throw new Error("Error fetching uploaded videos");
       const videos = await response.json();
 
       return videos.map((video) => {
         // Handle both local uploads and YouTube videos
         if (video.url.startsWith("/uploads")) {
-          return `http://localhost:10000${video.url}`;
+          return `${BACKEND_URL}${video.url}`;
         }
         return video.url;
       });
