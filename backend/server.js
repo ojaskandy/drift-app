@@ -8,6 +8,7 @@ const multer = require("multer"); // Import multer for file uploads
 const path = require("path"); // For handling file paths
 const fs = require("fs");
 const { Server } = require("socket.io");
+const { Storage } = require("@google-cloud/storage"); // Import Google Cloud Storage
 
 // Initialize Express App
 const app = express();
@@ -50,25 +51,15 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Connection Failed:", err));
 
-// Ensure 'uploads' directory exists
-const uploadsDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Save files in 'uploads' directory
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
-  },
+// Google Cloud Storage setup
+const storage = new Storage({
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 });
+const bucket = storage.bucket(process.env.BUCKET_NAME);
 
+// Multer configuration for in-memory storage
 const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit
 });
 
@@ -93,21 +84,41 @@ const videoSchema = new mongoose.Schema({
 });
 const Video = mongoose.model("Video", videoSchema);
 
+// Function to upload file to Google Cloud Storage
+const uploadToGoogleCloud = async (file) => {
+  const blob = bucket.file(file.originalname);
+  const blobStream = blob.createWriteStream({
+    resumable: false,
+  });
+
+  return new Promise((resolve, reject) => {
+    blobStream
+      .on("finish", () => {
+        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+        resolve(publicUrl);
+      })
+      .on("error", (err) => {
+        reject(err);
+      })
+      .end(file.buffer);
+  });
+};
+
 // Route: Upload Video
 app.post("/videos/upload", upload.single("file"), async (req, res) => {
   try {
     const { creator, title, description } = req.body;
 
-    // Check if file is provided
-    const videoUrl = req.file ? `/uploads/${req.file.filename}` : null;
-
-    if (!creator || !videoUrl) {
-      return res.status(400).json({ error: "Creator and file are required." });
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
     }
+
+    // Upload file to Google Cloud Storage
+    const publicUrl = await uploadToGoogleCloud(req.file);
 
     const newVideo = new Video({
       creator,
-      url: videoUrl,
+      url: publicUrl,
       title: title || "Untitled Video",
       description: description || "",
     });
