@@ -28,7 +28,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000", // Local Development
-      process.env.FRONTEND_URL, // Production Frontend
+      process.env.FRONTEND_URL || "https://drift-app-2hik.vercel.app", // Production Frontend
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true, // Allow cookies and credentials
