@@ -52,6 +52,7 @@ mongoose
   .catch((err) => console.error("MongoDB Connection Failed:", err));
 
 // Google Cloud Storage setup
+console.log("Credentials Path:", process.env.GOOGLE_APPLICATION_CREDENTIALS); // Log path for debugging
 const storage = new Storage({
   keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 });
@@ -103,6 +104,17 @@ const uploadToGoogleCloud = async (file) => {
       .end(file.buffer);
   });
 };
+
+// Route: Test Google Cloud Storage Access
+app.get("/test-google-cloud", async (req, res) => {
+  try {
+    const [buckets] = await storage.getBuckets();
+    res.status(200).json({ buckets });
+  } catch (err) {
+    console.error("Error accessing Google Cloud:", err.message);
+    res.status(500).json({ error: `Failed to access Google Cloud: ${err.message}` });
+  }
+});
 
 // Route: Upload Video
 app.post("/videos/upload", upload.single("file"), async (req, res) => {
